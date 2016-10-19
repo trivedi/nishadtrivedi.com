@@ -1,0 +1,42 @@
+<!doctype html>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/style.css')}}">
+    <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
+</head>
+<body>
+
+<div class="container">
+    <div class="define">
+        <h4>Nishad Trivedi</h4>
+        <div class="links">
+        <a href="https://en.wikipedia.org/wiki/Swara">/NEE-shad/</a> 
+        <a href="https://en.wikipedia.org/wiki/Trivedi">/Tree-vay-dee/</a><br>
+        <a href="mailto:nishadt15@gmail.com">nishadt15@gmail.com</a><br>
+        </div>
+    </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<script>
+var $win = $(window),
+    w = 0,h = 0,
+    rgb = [],
+    getWidth = function() {
+        w = $win.width();
+        h = $win.height();
+    };
+
+$win.resize(getWidth).mousemove(function(e) {
+    
+    rgb = [
+        Math.round(e.pageX/w * 60),
+        Math.round(e.pageY/h * 40),
+        80
+    ];
+
+    $("body").css('background','rgb('+rgb.join(',')+')');
+
+}).resize()
+</script>
+</body>
+</html>

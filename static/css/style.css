@@ -1,0 +1,38 @@
+body {
+    font-family: Inconsolata, monospace;
+    color: #408cff;
+    background-color: rgb(0,0,80);
+}
+
+a {
+    text-decoration: none;
+    color: #999;
+}
+
+a:hover {
+    cursor: pointer;
+    color: #f83c4d;
+}
+
+h4 {
+    font-size: 1.3em;
+    margin-bottom: 10px;
+}
+
+.define {
+    margin-left: 5%;
+    margin-top: 30%;
+}
+
+.links {
+    color: #999;
+    border-left-style: solid;
+    border-left-color: #999;
+    border-width: .5px;
+    padding-left: 10px;
+    margin-top: 5px;
+}
+
+/* orange: FE6A38;
+   red: F83C4D;
+*/
