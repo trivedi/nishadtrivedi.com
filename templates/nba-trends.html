@@ -185,7 +185,7 @@ document.getElementById("team").style.color = teamColor;
                 .duration(200)
                 .style("opacity", 1);
               
-        tooltip.html(formatDate(d.date) + ": " + d.comment);
+        tooltip.html(formatDate(d.date) + "<br>" + d.comment);
         })
         .on("mouseout", function(d) {
             tooltip.transition()
