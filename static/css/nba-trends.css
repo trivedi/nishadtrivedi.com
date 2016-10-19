@@ -122,6 +122,7 @@ select {
 #chart {
     width: 80%;
     height: 400px;
+    margin-left: 20px;
     margin-bottom: 50px;
 }
 
