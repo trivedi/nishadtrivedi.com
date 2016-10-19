@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+
+<head>
+<meta charset="utf-8">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/nba-trends.css') }}">
+<link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<title>NBA Popularity Trends</title>
+</head>
+
+
+<body>
+    <div class="container">
+        <div id="title">
+            <h1>How Much Does An NBA Player Affect His Team's Popularity?</h1>
+        </div>
+        <div id="graph">
+            <div id="graph-top">
+                <select>
+                    <option>LeBron James</option>
+                    <option>Stephen Curry</option>
+                    <option>Karl-Anthony Towns</option>
+                    <option>James Harden</option>
+                </select>
+                <span id="graph-title">
+                    <span id="player">LeBron James</span> of the <span id="team">Cleveland Cavaliers</span>
+                </span>
+            </div>
+        </div>
+        <div id="chart"></div>
+        <div id="annotation-area"></div>
+        <p>The success of a basketball team is dependent on the chemistry of the five players on the court. However, often times, an individual player is rewarded or blamed for the performance of his team. Regardless of whether they’re directly responsible for the numbers a team puts up, perceptions drive sports. Using <a href="https://www.google.com/trends/explore?q=%2Fm%2F01jz6d,%2Fm%2F0jm7n">Google Trends</a>, we can compare global popularity trends of various players and the teams they played for.</p>
+        <p>The Y-axis shows how often a particular search-term is entered relative to the total search-volume across the United States.</p>
+        <p>Annotations are provided for various milestones (e.g. draft, trade, signing, major injury, major wins/losses).</p>
+    </div>
+</body>
+ 
+<script>
+
+var parseDate = d3.time.format("%Y-%m-%d").parse;
+
+function transformData(d) {
+    return {
+        "date" : parseDate(d.date),
+        "player" : +d.player,
+        "team" : +d.team,
+        "playerAnnotation": d.playerAnnotation,
+        "teamAnnotation": d.teamAnnotation
+    }
+}
+
+// Getting the data: this is where you link your csv file to d3
+d3.csv("{{ url_for('static', filename='data/lebronjames.csv') }}", transformData, function(error, data) {
+
+
+//data.forEach(function(d) { console.log(d); });
+
+// Define chart's dimensions and padding: this is where you change the chart's size (currently set to 600 x 270)
+var padding = {top: 30, right: 30, bottom: 30, left: 50};
+var w = 900 - padding.left - padding.right;
+var h = 400 - padding.top - padding.bottom;
+
+
+// setting x-scale based on time: no need to change anything here
+var xScale = d3.time.scale()
+        .domain(d3.extent(data, function(d) { return d.date; }))
+        .range([0, w]);
+
+// setting y-scale
+var yScale = d3.scale.linear()
+        .domain([0, d3.max(data, function(d) { return d.player; })]) // you will change 'trump' with one of your columns
+        .range([h, 0]);
+
+
+// Drawing area: no need to change anything here
+var svg = d3.select("#chart")
+            .append("svg")
+            .attr("width", w + padding.left + padding.right)
+            .attr("height", h + padding.top + padding.bottom)
+            .append("g")
+            .attr("transform", "translate(" + padding.left + "," + padding.top + ")");
+
+var plotPlayer = d3.svg.line()
+                   .x(function(d) { return xScale(d.date); })
+                   .y(function(d) { return yScale(+d.player); });
+
+var plotTeam = d3.svg.line()
+                 .x(function(d) { return xScale(d.date); })
+                 .y(function(d) { return yScale(+d.team); });
+
+// to add more lines, you will need to create additional variables (right now there's "clintonline" and "trumpline") to do this, basically follow the template below:
+
+// var _______ = d3.svg.line()        <---  the blank line is the variable name that can be anything
+// .x(function(d) { return xScale(d.date); })
+// .y(function(d) { return yScale(+d['________']); });   <--- the blank line is the column that you're getting the data from
+ 
+var playerColor = "#FFDF2A";
+var teamColor = "#FF5925";
+var formatDate = d3.time.format("%_m/%_d/%Y")
+
+
+// drawing the lines
+var playerPath = svg.append("path")  
+    .attr("stroke", playerColor)
+    .attr("d", plotPlayer(data));
+document.getElementById("player").style.color = playerColor;
+
+var len = playerPath.node().getTotalLength();
+
+playerPath.attr("stroke-dasharray", len + " " + len)
+    .attr("stroke-dashoffset", len)
+    .transition()
+    .duration(2000)
+    .ease("linear")
+    .attr("stroke-dashoffset", 0);
+
+
+svg.append("path")  
+    .attr("stroke", teamColor)
+    .attr("d", plotTeam(data))
+    .attr("stroke-dasharray", len + " " + len)
+    .attr("stroke-dashoffset", len)
+    .transition()
+    .duration(2000)
+    .ease("linear")
+    .attr("stroke-dashoffset", 0);
+document.getElementById("team").style.color = teamColor;
+
+
+// to add more lines, you will also need to append additional paths like this:
+// svg.append("path")
+// .attr("stroke", color-of-your-choice)
+// .attr("d", _________(data));      <--- the blank field is the variable name that you created above
+
+// Annotation functionality
+    var tooltip = d3.select("#annotation-area").append("div")
+        .attr("class", "tooltip")
+        .style("opacity", 1);
+
+    svg.selectAll("dots_c")
+      .data(data)
+      .enter()
+      .append("circle")
+      .filter(function(d) {
+        // open csv and look at "annotation" columns. 
+        // only values that are not empty will be chosen and the reference will be passed down
+        // also, create a 'comment' field to reference the comment regardless of which entity it belongs to
+        if (d.playerAnnotation !== "") {
+          d.comment = d.playerAnnotation;
+          d.path = 'player';
+          return true;
+        }
+        else if (d.teamAnnotation !== "") {
+          d.comment = d.teamAnnotation;
+          d.path = 'team'
+          return true;
+        }
+        else
+          return false;
+      })
+      .attr("cx", function(d) {
+        return xScale(d.date); 
+      })
+      .attr("cy", function(d) {
+        return yScale(d.player); 
+      })
+      .attr("class","annotation")
+      .attr("cx", function(d) {
+        return xScale(d.date);
+      })
+      .attr("cy", function(d) {
+        if (d.path == 'player')
+          return yScale(d.player);
+        else
+          return yScale(d.team);
+      })
+      .attr("r", function(d) {
+        return 5; // size of annotation marker
+      })
+      .on("mouseover", function(d) {
+        this.parentNode.appendChild(this);
+
+        tooltip.transition()
+                .duration(200)
+                .style("opacity", 1);
+              
+        tooltip.html(formatDate(d.date) + ": " + d.comment);
+        })
+        .on("mouseout", function(d) {
+            tooltip.transition()
+           .duration(500)
+           .style("opacity", 0);
+        });
+
+// End of annotation functionality
+
+
+// setting up the x-axis
+var xAxis = d3.svg.axis()
+    .scale(xScale)
+    .orient("bottom")
+    .innerTickSize(-h)
+    .outerTickSize(0)
+    .tickPadding(10);
+
+// drawing the x-axis
+svg.append("g").call(xAxis) 
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + h + ")"); // this line is necessary to move line from top of graph to the bottom
+
+// setting up the y-axis
+var yAxis = d3.svg.axis()
+              .scale(yScale)
+              .ticks(4)         // only mark every range/4 ticks
+              .orient("left")
+              .innerTickSize(-w)
+              .outerTickSize(0)
+              .tickPadding(10);
+
+// drawing the y-axis
+svg.append("g").call(yAxis) 
+        .attr("class", "y axis");
+
+});
+
+
+ 
+</script>
