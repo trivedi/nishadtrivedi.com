@@ -1,26 +1,15 @@
 <!doctype html>
 <head>
-    <title>Nishad Trivedi</title>
+    <title>{{title}}</title>
     <link rel="stylesheet" type="text/css" href="{{url_for('static', filename='css/style.css')}}">
     <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
 </head>
 <body>
 
 <div class="container">
-    <div class="header">Nishad Trivedi</div>
-    <div class="section">
-        <a href="{{ url_for('about') }}">About</a> /
-        <a class="index-link" href="https://www.google.com/maps/place/Minneapolis,+MN+55414/@44.975647,-93.268791,13z">Minneapolis</a>
-    </div>
-    <div class="section">
-        <a href="{{ url_for('projects') }}">Projects</a> /
-        <a class="index-link" href="{{ url_for('nba_trends') }}">nba-trends</a> /
-        <a  class="index-link" href="https://github.com/trivedi/genius">genius</a>
-    </div>
-     <div class="section">
-        <a href="{{ url_for('blog') }}">Blog</a> / 
-        <a class="index-link" href="{{ url_for('nba_trends') }}">Literature</a> /
-        <a class="index-link" href="https://github.com/trivedi/genius">Music</a>
+    <div class="header"><a href="{{ url_for('index') }}">Nishad Trivedi</a> / {{title}}</div>
+    <div class="content">
+    <p>I am a  developer living in Minneapolis, MN.</p>
     </div>
 </div>
 
@@ -39,7 +28,7 @@ $win.resize(getWidth).mousemove(function(e) {
     rgb = [
         Math.round(e.pageX/w * 60),
         Math.round(e.pageY/h * 40),
-        90
+        80
     ];
 
     $("body").css('background','rgb('+rgb.join(',')+')');

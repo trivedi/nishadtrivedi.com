@@ -5,32 +5,40 @@ body {
 }
 
 a {
+    color: #408cff;
     text-decoration: none;
-    color: #999;
 }
 
-a:hover {
+a:hover, a.index-link:hover {
     cursor: pointer;
-    color: #f83c4d;
+    color: #F5F53B;
 }
 
-h4 {
-    font-size: 1.3em;
-    margin-bottom: 10px;
+a.index-link {
+    color: #A9DFF5;
 }
 
-.define {
-    margin-left: 5%;
-    margin-top: 30%;
+p {
+    color: #A9DFF5;
 }
 
-.links {
-    color: #999;
-    border-left-style: solid;
-    border-left-color: #999;
+.container {
+    margin-left: 50px;
+    margin-right: 50px;
+    margin-top: 30px;
+}
+
+.section {
+    font-size: 50px;
+    margin-bottom: 20px;
+}
+
+.header {
+    border-color: #408cff;
+    border-bottom-style: solid;
     border-width: .5px;
-    padding-left: 10px;
-    margin-top: 5px;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
 }
 
 /* orange: FE6A38;
